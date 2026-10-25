@@ -3,10 +3,11 @@ export type Cents = number;
 
 const formatter = new Intl.NumberFormat('nl-BE', { style: 'currency', currency: 'EUR' });
 
-/** Formatteert centen als `€ 30,00` (Belgisch formaat, gewone spaties). */
+/** Formatteert centen als `€ 30,00` of `-€ 70,00` (Belgisch formaat, gewone spaties). */
 export function formatEuro(cents: Cents): string {
   assertCents(cents);
-  return formatter.format(cents / 100).replace(/ | /g, ' ');
+  const s = formatter.format(Math.abs(cents) / 100).replace(/[\u00a0\u202f]/g, ' ');
+  return cents < 0 ? '-' + s : s;
 }
 
 /** Zoals formatEuro, maar met expliciet + voor positieve bedragen. */

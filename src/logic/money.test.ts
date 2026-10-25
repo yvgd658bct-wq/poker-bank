@@ -6,7 +6,9 @@ describe('money', () => {
     expect(formatEuro(3000)).toBe('€ 30,00');
     expect(formatEuro(1250)).toBe('€ 12,50');
     expect(formatEuro(123456)).toBe('€ 1.234,56');
-    expect(formatEuro(-7000)).toMatch(/^-\s?€ 70,00$|^€ -70,00$/);
+    expect(formatEuro(-7000)).toBe('-€ 70,00');
+    expect(formatSigned(-1)).toBe('-€ 0,01');
+    expect(formatSigned(0)).toBe('€ 0,00');
     expect(formatSigned(7000)).toBe('+€ 70,00');
   });
 
