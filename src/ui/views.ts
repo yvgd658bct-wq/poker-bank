@@ -11,7 +11,7 @@ import type { AppData, Player, Session } from '../types';
 export type Tab = 'sessie' | 'afsluiten' | 'geschiedenis';
 
 export type Sheet =
-  | { kind: 'buyin'; playerId: string; custom: boolean }
+  | { kind: 'buyin'; playerId: string; amountText?: string }
   | { kind: 'addPlayer' }
   | { kind: 'playerMenu'; playerId: string }
   | { kind: 'cashout'; playerId: string }
@@ -353,13 +353,9 @@ export function renderSheet(data: AppData, sheet: Sheet, error: string | null, d
           ${m === 'cash' ? 'Cash' : 'Later'}${hasBuyIns && p.lastMethod === m ? '<span class="hint">laatst gekozen</span>' : ''}</button>`;
       body = `
         <h2>Inkoop · ${esc(p.name)}</h2>
-        ${
-          sheet.custom
-            ? `<label class="field">Bedrag (€)<input id="buyin-amount" inputmode="decimal" value="${centsToInput(s.defaultBuyIn)}" autofocus></label>
-               <div class="row chips">${[1500, 3000, 6000].map((v) => `<button class="chip" data-action="set-amount" data-value="${centsToInput(v)}">${formatEuro(v)}</button>`).join('')}</div>`
-            : `<div class="amount-line"><span class="big">${formatEuro(s.defaultBuyIn)}</span>
-               <button class="link" data-action="buyin-custom">Ander bedrag</button></div>`
-        }
+        <label class="field amount-field">Bedrag (€)
+          <input id="buyin-amount" inputmode="decimal" enterkeyhint="done"
+            value="${esc(sheet.amountText ?? centsToInput(s.defaultBuyIn))}"></label>
         ${err}
         <div class="method-row">${btn('cash')}${btn('later')}</div>
         <button class="btn ghost wide" data-action="close-sheet">Annuleren</button>`;

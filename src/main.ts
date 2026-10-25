@@ -191,28 +191,22 @@ const actions: Record<string, (el: HTMLElement) => void> = {
     addPlayer(el.dataset.name ?? '');
   },
   'open-buyin'(el) {
-    openSheet({ kind: 'buyin', playerId: el.dataset.id!, custom: false });
-  },
-  'buyin-custom'() {
-    if (ui.sheet?.kind === 'buyin') openSheet({ ...ui.sheet, custom: true });
-  },
-  'set-amount'(el) {
-    const input = document.getElementById('buyin-amount') as HTMLInputElement | null;
-    if (input) input.value = el.dataset.value ?? '';
+    openSheet({ kind: 'buyin', playerId: el.dataset.id! });
   },
   buyin(el) {
     const sheet = ui.sheet;
     const s = data.active;
     if (sheet?.kind !== 'buyin' || !s) return;
     const method = el.dataset.method as PayMethod;
-    let amount = s.defaultBuyIn;
-    if (sheet.custom) {
-      try {
-        amount = amountFrom('buyin-amount');
-      } catch (e) {
-        ui.error = message(e);
-        return render();
-      }
+    let amount: number;
+    try {
+      amount = amountFrom('buyin-amount');
+      if (amount === 0) throw new S.DomainError('Het bedrag moet groter zijn dan € 0,00.');
+    } catch (e) {
+      // Ingetypte tekst behouden zodat de bank ze kan verbeteren.
+      ui.sheet = { ...sheet, amountText: inputValue('buyin-amount') };
+      ui.error = message(e);
+      return render();
     }
     const name = s.players.find((p) => p.id === sheet.playerId)?.name ?? '';
     const label = `Inkoop ${name} ${formatEuro(amount)} ${method}`;

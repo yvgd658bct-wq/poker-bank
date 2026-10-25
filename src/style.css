@@ -563,11 +563,10 @@ ul.plain {
     opacity: 0.5;
   }
 }
-.amount-line {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
+.amount-field input {
+  font-size: 1.6rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
 }
 .method-row {
   display: grid;
