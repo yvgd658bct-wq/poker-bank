@@ -2,7 +2,7 @@ import './style.css';
 import { formatEuro, parseEuro } from './logic/money';
 import * as S from './session';
 import { exportJson, importJson, load, save, UNDO_LIMIT } from './storage';
-import { whatsappText } from './text';
+import { METHOD_SHORT, whatsappText } from './text';
 import type { AppData, PayMethod, Session } from './types';
 import {
   esc,
@@ -209,7 +209,7 @@ const actions: Record<string, (el: HTMLElement) => void> = {
       return render();
     }
     const name = s.players.find((p) => p.id === sheet.playerId)?.name ?? '';
-    const label = `Inkoop ${name} ${formatEuro(amount)} ${method}`;
+    const label = `Inkoop ${name} ${formatEuro(amount)} ${METHOD_SHORT[method]}`;
     mutate(label, (x) => S.addBuyIn(x, sheet.playerId, amount, method, new Date().toISOString()), { toast: `✓ ${label}` });
   },
   'ask-delete-buyin'(el) {
@@ -227,8 +227,8 @@ const actions: Record<string, (el: HTMLElement) => void> = {
     if (!s || !b) return;
     const to: PayMethod = b.method === 'cash' ? 'later' : 'cash';
     const text = S.describeBuyIn(s, b);
-    confirmSheet('Betaalwijze wijzigen?', `${esc(text)} → <b>${to}</b>`, `Wijzig naar ${to}`, () =>
-      mutate(`${text} → ${to}`, (x) => S.setBuyInMethod(x, b.id, to)),
+    confirmSheet('Betaalwijze wijzigen?', `${esc(text)} → <b>${METHOD_SHORT[to]}</b>`, `Wijzig naar ${METHOD_SHORT[to]}`, () =>
+      mutate(`${text} → ${METHOD_SHORT[to]}`, (x) => S.setBuyInMethod(x, b.id, to)),
     );
   },
   'open-player-menu'(el) {

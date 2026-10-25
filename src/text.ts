@@ -1,7 +1,12 @@
 /** Teksten die zowel in de interface als in de WhatsApp-export gebruikt worden. Puur. */
 import { formatEuro, formatSigned } from './logic/money';
 import type { CashPayout } from './logic/settle';
-import type { Session } from './types';
+import type { PayMethod, Session } from './types';
+
+/** Interfacetekst per betaalwijze. Intern heet `later` nog altijd `later` (compatibel met bewaarde data). */
+export const METHOD_LABEL: Record<PayMethod, string> = { cash: 'Cash', later: 'Via overschrijving' };
+/** Korte vorm in lopende tekst, bv. "cash € 30,00 · overschrijving € 60,00". */
+export const METHOD_SHORT: Record<PayMethod, string> = { cash: 'cash', later: 'overschrijving' };
 
 export function formatDateLong(isoDate: string): string {
   const d = new Date(isoDate + 'T12:00:00');

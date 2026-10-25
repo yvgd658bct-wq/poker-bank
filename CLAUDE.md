@@ -11,7 +11,7 @@ Toetsvraag voor elke ontwerpkeuze: maakt dit de registratie betrouwbaarder of de
 |---|---|---|
 | Bank | `isBank` | Persoon met het toestel; beheert app en cash pot. Speelt meestal mee. |
 | Inkoop | `BuyIn` | Bedrag aan fiches. Standaard €30, aanpasbaar per sessie en per inkoop. |
-| Betaalwijze | `PayMethod` = `'cash' \| 'later'` | Per inkoop; kan verschillen bij dezelfde speler. |
+| Betaalwijze | `PayMethod` = `'cash' \| 'later'` | Per inkoop; kan verschillen bij dezelfde speler. In de interface heet `later` **"Via overschrijving"** (kort: "overschrijving", badge "Overschr."); labels in `METHOD_LABEL`/`METHOD_SHORT` in `src/text.ts`. |
 | Pot | `pot` | Cash bij de bank = som van alle cash-inkopen. |
 | Eindstack | `finalStack` | Waarde in euro van de fiches op het einde of bij vroegtijdig vertrek. |
 | Resultaat | `result` | eindstack − totaal ingekocht. |

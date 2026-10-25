@@ -5,7 +5,7 @@
 import { centsToInput, formatEuro, formatSigned } from '../logic/money';
 import { checkStacks, settle, type Settlement } from '../logic/settle';
 import { canReopen, playerSummary, sessionTotals, toPlayerInputs } from '../session';
-import { formatDateLong, formatDateShort, formatTime, payoutText } from '../text';
+import { formatDateLong, formatDateShort, formatTime, METHOD_LABEL, METHOD_SHORT, payoutText } from '../text';
 import type { AppData, Player, Session } from '../types';
 
 export type Tab = 'sessie' | 'afsluiten' | 'geschiedenis';
@@ -30,7 +30,7 @@ export function esc(s: string): string {
   return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
 }
 
-const methodBadge = (m: 'cash' | 'later') => `<span class="badge ${m}">${m === 'cash' ? 'Cash' : 'Later'}</span>`;
+const methodBadge = (m: 'cash' | 'later') => `<span class="badge ${m}">${m === 'cash' ? 'Cash' : 'Overschr.'}</span>`;
 const signClass = (n: number) => (n > 0 ? 'pos' : n < 0 ? 'neg' : '');
 
 // ───────────────────────── Sessie ─────────────────────────
@@ -69,7 +69,7 @@ function renderPlayerCard(s: Session, p: Player): string {
   const detail =
     sum.count === 0
       ? 'Nog geen inkopen'
-      : `${sum.count}× · ${formatEuro(sum.total)} <span class="muted">(cash ${formatEuro(sum.cash)} · later ${formatEuro(sum.later)})</span>`;
+      : `${sum.count}× · ${formatEuro(sum.total)} <span class="muted">(cash <span class="nw">${formatEuro(sum.cash)}</span> · ${METHOD_SHORT.later} <span class="nw">${formatEuro(sum.later)}</span>)</span>`;
   return `
     <div class="card player ${p.cashedOut ? 'inactive' : ''}">
       <div class="player-head">
@@ -91,7 +91,7 @@ function renderLog(s: Session): string {
     .reverse()
     .map(({ b, nr }) => {
       const p = s.players.find((x) => x.id === b.playerId);
-      const other = b.method === 'cash' ? 'later' : 'cash';
+      const other: 'cash' | 'later' = b.method === 'cash' ? 'later' : 'cash';
       return `
         <li class="log-row">
           <span class="log-nr">#${nr}</span>
@@ -100,7 +100,7 @@ function renderLog(s: Session): string {
           <span class="log-amount">${formatEuro(b.amount)}</span>
           ${methodBadge(b.method)}
           <span class="log-actions">
-            <button class="icon-btn small" data-action="ask-switch-method" data-id="${b.id}" aria-label="Wijzig naar ${other}">⇄</button>
+            <button class="icon-btn small" data-action="ask-switch-method" data-id="${b.id}" aria-label="Wijzig naar ${METHOD_SHORT[other]}">⇄</button>
             <button class="icon-btn small danger" data-action="ask-delete-buyin" data-id="${b.id}" aria-label="Verwijder">✕</button>
           </span>
         </li>`;
@@ -350,7 +350,7 @@ export function renderSheet(data: AppData, sheet: Sheet, error: string | null, d
       const hasBuyIns = s.buyIns.some((b) => b.playerId === p.id);
       const btn = (m: 'cash' | 'later') =>
         `<button class="btn method ${m} ${p.lastMethod === m ? 'preselected' : ''}" data-action="buyin" data-method="${m}">
-          ${m === 'cash' ? 'Cash' : 'Later'}${hasBuyIns && p.lastMethod === m ? '<span class="hint">laatst gekozen</span>' : ''}</button>`;
+          ${METHOD_LABEL[m]}${hasBuyIns && p.lastMethod === m ? '<span class="hint">laatst gekozen</span>' : ''}</button>`;
       body = `
         <h2>Inkoop · ${esc(p.name)}</h2>
         <label class="field amount-field">Bedrag (€)
@@ -400,7 +400,7 @@ export function renderSheet(data: AppData, sheet: Sheet, error: string | null, d
       const sum = playerSummary(s, p.id);
       body = `
         <h2>Uitcashen · ${esc(p.name)}</h2>
-        <p class="muted">Ingekocht: ${formatEuro(sum.total)} (cash ${formatEuro(sum.cash)} · later ${formatEuro(sum.later)})</p>
+        <p class="muted">Ingekocht: ${formatEuro(sum.total)} (cash ${formatEuro(sum.cash)} · ${METHOD_SHORT.later} ${formatEuro(sum.later)})</p>
         <p class="muted small">${esc(p.name)} wordt inactief en telt mee in de afrekening op het einde.</p>
         <label class="field">Eindstack (€)<input id="cashout-amount" inputmode="decimal" autofocus></label>
         ${err}

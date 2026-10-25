@@ -577,7 +577,9 @@ ul.plain {
 .btn.method {
   flex-direction: column;
   min-height: 96px;
-  font-size: 1.35rem;
+  font-size: 1.25rem;
+  line-height: 1.2;
+  text-align: center;
   border-width: 2px;
   border-color: var(--line);
 }

@@ -3,6 +3,7 @@
  * en gooit een DomainError (met Nederlandse boodschap) bij ongeldige acties.
  */
 import { formatEuro } from './logic/money';
+import { METHOD_SHORT } from './text';
 import { settle, summarizeBuyIns, type BuyInSummary, type PlayerInput } from './logic/settle';
 import type { BuyIn, Cents, PayMethod, Player, Session } from './types';
 
@@ -187,5 +188,5 @@ export function setPaid(s: Session, index: number, paid: boolean): Session {
 
 export function describeBuyIn(s: Session, b: BuyIn): string {
   const p = s.players.find((x) => x.id === b.playerId);
-  return `${p?.name ?? '?'} ${formatEuro(b.amount)} ${b.method === 'cash' ? 'cash' : 'later'}`;
+  return `${p?.name ?? '?'} ${formatEuro(b.amount)} ${METHOD_SHORT[b.method]}`;
 }
